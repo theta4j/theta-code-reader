@@ -22,7 +22,7 @@ dependencies {
 
 ## Example
 
-Please refer the [./app/src/main/java/org/theta4j/codereader/sample/MainActivity.kt](sample app).
+Please refer the [sample app](app/src/main/java/org/theta4j/codereader/sample/MainActivity.kt).
 
 ## Development
 
