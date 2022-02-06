@@ -16,34 +16,25 @@
 
 import java.util.*
 
-val sourceJarTaskName = "sourceJar"
-val javadocJarTaskName = "javadocJar"
-
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("android.extensions")
     `maven-publish`
-    id("digital.wup.android-maven-publish") version "3.6.2"
-    id("com.jfrog.bintray") version "1.8.4"
+    signing
 }
 
+version = "1.0.0"
+
 android {
-    compileSdkVersion(29)
+    compileSdk = 31
     defaultConfig {
-        minSdkVersion(25)
-        targetSdkVersion(29)
-        versionCode = 1
-        versionName = "1.0.0"
+        minSdk = 25
+        targetSdk = 31
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    buildTypes["release"].apply {
-        isMinifyEnabled = false
-        proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        sourceCompatibility(JavaVersion.VERSION_11)
+        targetCompatibility(JavaVersion.VERSION_11)
     }
 }
 
@@ -52,20 +43,20 @@ tasks {
         group = BasePlugin.BUILD_GROUP
 
         options.locale = "en_US"
-        source = android.sourceSets[SourceSet.MAIN_SOURCE_SET_NAME].java.sourceFiles
+        source = android.sourceSets[SourceSet.MAIN_SOURCE_SET_NAME].java.getSourceFiles()
         classpath += files(android.bootClasspath)
         android.libraryVariants.all {
             classpath += javaCompileProvider.get().classpath
-            classpath += files(renderscriptCompileProvider.get().objOutputDir)
+            classpath += files("$buildDir/intermediates/compile_library_classes_jar/$name")
         }
     }
-    create<Jar>(sourceJarTaskName) {
+    create<Jar>("sourceJar") {
         group = BasePlugin.BUILD_GROUP
 
         archiveClassifier.set("sources")
         from(android.sourceSets[SourceSet.MAIN_SOURCE_SET_NAME].java.srcDirs)
     }
-    create<Jar>(javadocJarTaskName) {
+    create<Jar>("javadocJar") {
         group = BasePlugin.BUILD_GROUP
 
         archiveClassifier.set("javadoc")
@@ -75,66 +66,62 @@ tasks {
     }
 }
 
-publishing {
-    publications.create<MavenPublication>("maven") {
-        from(components["android"])
-        groupId = "org.theta4j"
-        artifactId = "theta-code-reader"
-        version = android.defaultConfig.versionName
-        artifact(tasks["sourceJar"])
-        artifact(tasks["javadocJar"])
-        pom {
-            name.set("THETA Code Reader")
-            description.set("Client implementation of RICOH THETA API.")
-            url.set("https://github.com/theta4j/theta-code-reader")
-            licenses {
-                license {
-                    name.set("The Apache License, Version 2.0")
-                    url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                }
-                developers {
-                    developer {
-                        name.set("theta4j Project")
-                        email.set("info@theta4j.org")
+afterEvaluate {
+    publishing {
+        publications.create<MavenPublication>("ossrh") {
+            from(components["release"])
+            groupId = "org.theta4j"
+            artifactId = "theta-code-reader"
+            version = project.version as String
+            artifact(tasks["sourceJar"])
+            artifact(tasks["javadocJar"])
+            pom {
+                name.set("THETA Code Reader")
+                description.set("QR Code reader library for RICOH THETA Plug-in system.")
+                url.set("https://github.com/theta4j/theta-web-api")
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                    developers {
+                        developer {
+                            name.set("theta4j Project")
+                            email.set("info@theta4j.org")
+                        }
+                    }
+                    scm {
+                        url.set("https://github.com/theta4j/theta-code-reader.git")
                     }
                 }
-                scm {
-                    url.set("https://github.com/theta4j/theta-code-reader.git")
+            }
+        }
+
+        repositories {
+            maven {
+                url = uri("$buildDir/repo")
+            }
+
+            maven {
+                val props = Properties().apply {
+                    rootProject.file("local.properties").inputStream().use(this::load)
+                }
+                url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                credentials {
+                    username = props.getProperty("ossrh.user")
+                    password = props.getProperty("ossrh.password")
                 }
             }
         }
     }
 
-    repositories.maven {
-        url = uri("$buildDir/repo")
-    }
-}
-
-bintray {
-    val props = Properties().apply { load(rootProject.file("local.properties").inputStream()) }
-
-    user = props["bintray.user"]?.toString().orEmpty()
-    key = props["bintray.key"]?.toString().orEmpty()
-    setPublications("maven")
-    pkg.apply {
-        userOrg = "theta4j"
-        repo = "maven"
-        name = "theta-code-reader"
-        version.apply {
-            name = android.defaultConfig.versionName
-            vcsTag = "v${android.defaultConfig.versionName}"
-            gpg.sign = true
-            mavenCentralSync.apply {
-                sync = true
-                user = props["ossrh.user"]?.toString().orEmpty()
-                password = props["ossrh.password"]?.toString().orEmpty()
-            }
-        }
+    signing {
+        sign(publishing.publications["ossrh"])
     }
 }
 
 dependencies {
-    api("androidx.annotation:annotation:1.1.0")
+    api("androidx.annotation:annotation:1.3.0")
     implementation("com.google.zxing:core:3.3.3")
     implementation("com.google.zxing:android-core:3.3.0")
 }

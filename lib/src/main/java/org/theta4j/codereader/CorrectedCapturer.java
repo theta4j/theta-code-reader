@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2022 theta4j project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.theta4j.codereader;
 
 import android.content.Context;
@@ -17,7 +33,8 @@ import java.util.Objects;
  * CorrectedCapturer controls THETA camera API.
  * Capture a dual-fisheye image, correct the distortion and pass it to the listener function.
  *
- * <table summary="Camera and Image parameters">
+ * <table>
+ * <caption>Camera and Image parameters</caption>
  * <tbody>
  * <tr><th>Format</th><td>Dual-fisheye (Distortion corrected)</td></tr>
  * <tr><th>Width</th><td>3840px</td></tr>

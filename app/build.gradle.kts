@@ -14,56 +14,40 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
-
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("android.extensions")
 }
 
 android {
-    compileSdkVersion(29)
+    compileSdk = 31
     defaultConfig {
         applicationId = "org.theta4j.qr.sample"
-        minSdkVersion(25)
-        targetSdkVersion(29)
+        minSdk = 25
+        targetSdk = 31
         versionCode = 1
         versionName = "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    buildTypes["release"].apply {
-        isMinifyEnabled = false
-        proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-    }
-    lintOptions {
-        // THETA Plug-in Library depends on java.awt.* package and it causes Error.
-        // See https://github.com/ricohapi/theta-plugin-library/issues/8
-        isAbortOnError = false
+    viewBinding {
+        isEnabled = true
     }
 }
 
-// for release test
-//
-// repositories {
-//     maven {
-//         url = uri(project(":lib").buildDir.toString() + "/repo")
-//     }
-// }
+repositories {
+    maven {
+        url = uri(project(":lib").buildDir.toString() + "/repo")
+    }
+}
 
 dependencies {
     implementation(project(":lib"))
     // implementation("org.theta4j:theta-code-reader:1.0.0")
-    implementation(kotlin("stdlib-jdk8", KotlinCompilerVersion.VERSION))
-    implementation("androidx.appcompat:appcompat:1.1.0")
-    implementation("androidx.core:core-ktx:1.1.0")
-    implementation("androidx.constraintlayout:constraintlayout:1.1.3")
+    implementation("androidx.appcompat:appcompat:1.4.1")
+    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
     implementation("com.theta360:pluginlibrary:2.1.0")
-    testImplementation("junit:junit:4.12")
-    androidTestImplementation("androidx.test.ext:junit:1.1.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.3")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 }
