@@ -17,25 +17,25 @@
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:3.5.2")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.50")
+        classpath("com.android.tools.build:gradle:7.1.1")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
     }
 }
 
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven {
             url = uri("https://github.com/ricohapi/theta-plugin-library/raw/master/repository")
         }
     }
 }
 
-tasks.create(BasePlugin.CLEAN_TASK_NAME, Delete::class) {
+tasks.create<Delete>(BasePlugin.CLEAN_TASK_NAME) {
     group = BasePlugin.BUILD_GROUP
 
     delete(rootProject.buildDir)

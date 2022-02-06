@@ -11,12 +11,12 @@ Modify your `build.gradle` to include this library.
 ```groovy
 repositories {
     ...
-    jcenter() // insert this line
+    mavenCentral() // insert this line
 }
 
 dependencies {
     ...
-    implementation 'org.theta4j:theta-code-reader:1.0.0' // insert this line
+    implementation 'org.theta4j:theta-code-reader:1.0.1' // insert this line
 }
 ```
 
