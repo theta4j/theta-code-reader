@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
     ...
-    implementation 'org.theta4j:theta-code-reader:1.0.0' // insert this line
+    implementation 'org.theta4j:theta-code-reader:1.0.1' // insert this line
 }
 ```
 
